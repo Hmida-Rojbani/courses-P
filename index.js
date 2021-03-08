@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const express = require('express');
+const Joi = require('joi');
 const port = 3000
 
 const app = express();
@@ -24,7 +25,18 @@ app.get('/api/courses/find/price/:price', (req,res)=>{
 });
 app.use(express.json());
 
+const validation_schema = Joi.object({
+    title : Joi.string().min(4).required(),
+    author : Joi.string().max(20).min(4).required(),
+    price : Joi.number().positive().max(500),
+    url : Joi.string()
+
+})
+
 app.post('/api/courses', (req,res)=>{
+    let validation_result = validation_schema.validate(req.body);
+    if(validation_result.error)
+        return res.status(400).send(validation_result.error.details[0].message)
     let course = _.pick(req.body, ['title','author','price','url']);
     courses.push(course);
     res.status(201).send(course)
