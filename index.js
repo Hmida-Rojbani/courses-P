@@ -1,4 +1,4 @@
-const { response } = require('express');
+const _ = require('lodash');
 const express = require('express');
 const port = 3000
 
@@ -22,5 +22,12 @@ app.get('/api/courses/find/price/:price', (req,res)=>{
         res.status(204);
     res.send(course_list)
 });
+app.use(express.json());
+
+app.post('/api/courses', (req,res)=>{
+    let course = _.pick(req.body, ['title','author','price','url']);
+    courses.push(course);
+    res.status(201).send(course)
+})
 
 app.listen(port, ()=>console.log(`Server on ${port}`))  //' Server on '+port
